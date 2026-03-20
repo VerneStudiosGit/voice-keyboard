@@ -254,8 +254,22 @@ app.whenReady().then(async () => {
   createOverlay();
   createFab();
 
-  function registerShortcut(accelerator: string): boolean {
-    // Unregister previous shortcut if any
+  function registerEscape(): void {
+    if (!globalShortcut.isRegistered('Escape')) {
+      globalShortcut.register('Escape', () => {
+        if (isRecording) {
+          isRecording = false;
+          hideOverlay();
+          broadcastStatus('idle');
+          win?.webContents.send('cancel-recording');
+          previousAppBundleId = null;
+          globalShortcut.unregister('Escape');
+        }
+      });
+    }
+  }
+
+  function registerShortcutWithEscape(accelerator: string): boolean {
     if (currentShortcut) {
       globalShortcut.unregister(currentShortcut);
     }
@@ -270,6 +284,7 @@ app.whenReady().then(async () => {
         showOverlay('recording');
         broadcastStatus('recording');
         win?.webContents.send('start-recording');
+        registerEscape();
 
         await restoreFocus();
       } else {
@@ -277,6 +292,9 @@ app.whenReady().then(async () => {
         hideOverlay();
         broadcastStatus('idle');
         win?.webContents.send('stop-recording');
+        if (globalShortcut.isRegistered('Escape')) {
+          globalShortcut.unregister('Escape');
+        }
       }
     });
 
@@ -290,17 +308,7 @@ app.whenReady().then(async () => {
   }
 
   const config = loadConfig();
-  registerShortcut(config.shortcut || 'F19');
-
-  globalShortcut.register('Escape', () => {
-    if (isRecording) {
-      isRecording = false;
-      hideOverlay();
-      broadcastStatus('idle');
-      win?.webContents.send('cancel-recording');
-      previousAppBundleId = null;
-    }
-  });
+  registerShortcutWithEscape(config.shortcut || 'F19');
 
   // Relay audio level from recorder to overlay
   ipcMain.on('audio-level', (_event, level: number) => {
@@ -350,7 +358,7 @@ app.whenReady().then(async () => {
     }
     // Re-register shortcut if it changed
     if (newConfig.shortcut && newConfig.shortcut !== oldConfig.shortcut) {
-      const ok = registerShortcut(newConfig.shortcut);
+      const ok = registerShortcutWithEscape(newConfig.shortcut);
       return { shortcutRegistered: ok };
     }
     return { shortcutRegistered: true };
