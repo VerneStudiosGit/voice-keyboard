@@ -1,0 +1,7 @@
+node_modules/
+dist/
+out/
+.webpack/
+.env
+*.log
+.DS_Store

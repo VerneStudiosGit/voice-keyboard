@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Voice Keyboard Settings</title>
+  </head>
+  <body>
+    <div class="panel">
+      <div class="header">
+        <h1>Voice Keyboard</h1>
+        <span class="status" id="status">Idle</span>
+      </div>
+
+      <!-- General -->
+      <div class="section-title">General</div>
+
+      <div class="section">
+        <label class="label">OpenAI API Key</label>
+        <div class="input-row">
+          <input type="password" id="apiKey" placeholder="sk-..." spellcheck="false" />
+          <button class="btn-icon" id="toggleApiKey" title="Show/Hide">&#128065;</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <label class="label">Dictation Language</label>
+        <select id="language">
+          <option value="es">Espanol</option>
+          <option value="en">English</option>
+          <option value="pt">Portugues</option>
+          <option value="fr">Francais</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="zh">Chinese</option>
+          <option value="auto">Auto-detect</option>
+        </select>
+      </div>
+
+      <!-- Filters -->
+      <div class="section-title">
+        Filters
+        <button class="btn-add" id="addFilterBtn">+ Add</button>
+      </div>
+
+      <div class="filters-list" id="filtersList">
+        <!-- Filters will be rendered here -->
+      </div>
+
+      <div class="section" style="margin-top: 12px;">
+        <button class="btn-save" id="saveBtn">Save</button>
+      </div>
+
+      <div class="footer">
+        <span class="version">v1.0.0</span>
+        <button class="btn-quit" id="quitBtn">Quit</button>
+      </div>
+    </div>
+  </body>
+</html>
