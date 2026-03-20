@@ -17,8 +17,4 @@ export const mainConfig: Configuration = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
-  externals: {
-    'openai': 'commonjs openai',
-    'dotenv': 'commonjs dotenv',
-  },
 };
