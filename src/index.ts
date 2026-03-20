@@ -31,6 +31,7 @@ let fabWin: BrowserWindow | null = null;
 let isRecording = false;
 let isProcessing = false;
 let previousAppBundleId: string | null = null;
+let currentShortcut: string | null = null;
 
 function saveFrontmostApp(): Promise<void> {
   return new Promise((resolve) => {
@@ -253,29 +254,43 @@ app.whenReady().then(async () => {
   createOverlay();
   createFab();
 
-  const registered = globalShortcut.register('F19', async () => {
-    if (isProcessing) return;
-
-    if (!isRecording) {
-      await saveFrontmostApp();
-
-      isRecording = true;
-      showOverlay('recording');
-      broadcastStatus('recording');
-      win?.webContents.send('start-recording');
-
-      await restoreFocus();
-    } else {
-      isRecording = false;
-      hideOverlay();
-      broadcastStatus('idle');
-      win?.webContents.send('stop-recording');
+  function registerShortcut(accelerator: string): boolean {
+    // Unregister previous shortcut if any
+    if (currentShortcut) {
+      globalShortcut.unregister(currentShortcut);
     }
-  });
 
-  if (!registered) {
-    console.error('Failed to register global shortcut F19');
+    const registered = globalShortcut.register(accelerator, async () => {
+      if (isProcessing) return;
+
+      if (!isRecording) {
+        await saveFrontmostApp();
+
+        isRecording = true;
+        showOverlay('recording');
+        broadcastStatus('recording');
+        win?.webContents.send('start-recording');
+
+        await restoreFocus();
+      } else {
+        isRecording = false;
+        hideOverlay();
+        broadcastStatus('idle');
+        win?.webContents.send('stop-recording');
+      }
+    });
+
+    if (registered) {
+      currentShortcut = accelerator;
+    } else {
+      console.error(`Failed to register global shortcut: ${accelerator}`);
+      currentShortcut = null;
+    }
+    return registered;
   }
+
+  const config = loadConfig();
+  registerShortcut(config.shortcut || 'F19');
 
   globalShortcut.register('Escape', () => {
     if (isRecording) {
@@ -327,11 +342,18 @@ app.whenReady().then(async () => {
     return loadConfig();
   });
 
-  ipcMain.handle('save-config', (_event, config: any) => {
-    saveConfig(config);
-    if (config.apiKey) {
-      process.env.OPENAI_API_KEY = config.apiKey;
+  ipcMain.handle('save-config', (_event, newConfig: any) => {
+    const oldConfig = loadConfig();
+    saveConfig(newConfig);
+    if (newConfig.apiKey) {
+      process.env.OPENAI_API_KEY = newConfig.apiKey;
     }
+    // Re-register shortcut if it changed
+    if (newConfig.shortcut && newConfig.shortcut !== oldConfig.shortcut) {
+      const ok = registerShortcut(newConfig.shortcut);
+      return { shortcutRegistered: ok };
+    }
+    return { shortcutRegistered: true };
   });
 
   ipcMain.on('app-quit', () => {

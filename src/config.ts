@@ -13,6 +13,7 @@ export interface TextFilter {
 export interface AppConfig {
   apiKey: string;
   language: string;
+  shortcut: string;
   filters: TextFilter[];
 }
 
@@ -21,6 +22,7 @@ const CONFIG_FILE = path.join(app.getPath('userData'), 'config.json');
 const defaults: AppConfig = {
   apiKey: process.env.OPENAI_API_KEY || '',
   language: 'es',
+  shortcut: 'F19',
   filters: [],
 };
 

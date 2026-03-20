@@ -324,6 +324,34 @@ select:focus {
   color: #ff3b30;
 }
 
+.hint {
+  display: block;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-top: 4px;
+}
+
+.hint.error {
+  color: rgba(255, 59, 48, 0.8);
+}
+
+.hint.success {
+  color: rgba(52, 199, 89, 0.8);
+}
+
+#shortcutDisplay {
+  cursor: pointer;
+  text-align: center;
+  font-family: -apple-system, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+#shortcutDisplay.listening {
+  border-color: rgba(100, 120, 255, 0.6);
+  background: rgba(100, 120, 255, 0.1);
+}
+
 .empty-filters {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.25);
