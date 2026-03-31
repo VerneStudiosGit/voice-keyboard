@@ -115,14 +115,15 @@ function createOverlay(): void {
 
 function createFab(): void {
   const display = screen.getPrimaryDisplay();
-  const { width, height } = display.size;
+  const { x: workAreaX, y: workAreaY, width: workAreaWidth, height: workAreaHeight } = display.workArea;
   const fabSize = 44;
 
   fabWin = new BrowserWindow({
     width: fabSize,
     height: fabSize,
-    x: Math.round(width / 2 - fabSize / 2),
-    y: height - fabSize - 12,
+    // Use work area so the FAB stays visible above the Dock/menu bar.
+    x: Math.round(workAreaX + workAreaWidth / 2 - fabSize / 2),
+    y: Math.round(workAreaY + workAreaHeight - fabSize - 12),
     show: false,
     frame: false,
     transparent: true,
@@ -156,14 +157,13 @@ function createSettingsWindow(): void {
   }
 
   const display = screen.getPrimaryDisplay();
-  const { width } = display.size;
-  const workArea = display.workAreaSize;
+  const { x: workAreaX, y: workAreaY, width: workAreaWidth, height: workAreaHeight } = display.workArea;
   const panelWidth = 340;
   const panelHeight = 480;
 
   // Position above the FAB, within work area (above dock)
-  const x = Math.round(width / 2 - panelWidth / 2);
-  const y = workArea.height - panelHeight - 60;
+  const x = Math.round(workAreaX + workAreaWidth / 2 - panelWidth / 2);
+  const y = Math.round(workAreaY + workAreaHeight - panelHeight - 60);
 
   settingsWin = new BrowserWindow({
     width: panelWidth,
