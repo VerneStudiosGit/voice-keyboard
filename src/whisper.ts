@@ -9,6 +9,7 @@ export async function transcribeAudio(audioBuffer: Buffer): Promise<string> {
 
   const openai = new OpenAI({
     apiKey: config.apiKey,
+    maxRetries: 3,
   });
 
   const tmpPath = path.join(os.tmpdir(), `voice-kb-${Date.now()}.webm`);
