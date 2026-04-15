@@ -10,7 +10,8 @@ import { typeText } from './typer';
 import { loadConfig, saveConfig } from './config';
 import { applyFilters } from './filters';
 
-const gotTheLock = app.requestSingleInstanceLock();
+const shouldUseSingleInstanceLock = process.env.NODE_ENV !== 'development';
+const gotTheLock = shouldUseSingleInstanceLock ? app.requestSingleInstanceLock() : true;
 if (!gotTheLock) {
   app.quit();
 }

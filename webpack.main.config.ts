@@ -1,7 +1,7 @@
 import type { Configuration } from 'webpack';
 
 import { rules } from './webpack.rules';
-import { plugins } from './webpack.plugins';
+import { createMainPlugins } from './webpack.plugins';
 
 export const mainConfig: Configuration = {
   /**
@@ -13,7 +13,7 @@ export const mainConfig: Configuration = {
   module: {
     rules,
   },
-  plugins,
+  plugins: createMainPlugins(),
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json'],
   },
