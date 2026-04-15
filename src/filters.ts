@@ -37,7 +37,7 @@ export async function applyFilters(text: string): Promise<string> {
 
   if (enabledFilters.length === 0) return text;
 
-  const openai = new OpenAI({ apiKey: config.apiKey });
+  const openai = new OpenAI({ apiKey: config.apiKey, maxRetries: 3 });
   let result = text;
 
   for (const filter of enabledFilters) {
